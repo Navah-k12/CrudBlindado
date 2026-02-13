@@ -18,7 +18,6 @@ const datos_service_1 = require("./datos.service");
 const create_dato_dto_1 = require("./dto/create-dato.dto");
 const update_dato_dto_1 = require("./dto/update-dato.dto");
 let DatosController = class DatosController {
-    datosService;
     constructor(datosService) {
         this.datosService = datosService;
     }

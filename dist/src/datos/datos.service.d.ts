@@ -4,7 +4,11 @@ import { CreateDatoDto } from './dto/create-dato.dto';
 import { UpdateDatoDto } from './dto/update-dato.dto';
 export declare class DatosService implements OnModuleInit {
     private pool;
+    private logger;
+    private fallback;
+    private nextId;
     onModuleInit(): Promise<void>;
+    private query;
     create(createDatoDto: CreateDatoDto): Promise<Dato>;
     findAll(): Promise<Dato[]>;
     findOne(id: number): Promise<Dato>;

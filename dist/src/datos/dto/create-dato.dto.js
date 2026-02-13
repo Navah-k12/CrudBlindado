@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateDatoDto = void 0;
 const class_validator_1 = require("class-validator");
 class CreateDatoDto {
-    contenido;
 }
 exports.CreateDatoDto = CreateDatoDto;
 __decorate([

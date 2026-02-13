@@ -6,7 +6,6 @@ import type { Request, Response } from 'express';
 import express from 'express';
 
 const server = express();
-
 let appPromise: Promise<void> | null = null;
 
 function bootstrap() {

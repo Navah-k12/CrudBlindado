@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateDatoDto = void 0;
 const class_validator_1 = require("class-validator");
 class UpdateDatoDto {
-    contenido;
 }
 exports.UpdateDatoDto = UpdateDatoDto;
 __decorate([
