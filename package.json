@@ -6,10 +6,10 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build && cp -r client/. public/",
-    "prebuild": "mkdir -p public",
+    "build": "nest build && node ./scripts/copy-client.js",
+    "prebuild": "node -e \"require('fs').mkdirSync('public',{ recursive: true })\"",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "dev": "mkdir -p public && cp -r client/. public/ && PORT=3001 npx nest start --watch",
+    "dev": "node -e \"require('fs').mkdirSync('public',{ recursive: true })\" && node ./scripts/copy-client.js && PORT=3001 npx nest start --watch",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
