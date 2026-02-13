@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS datos (
+  id SERIAL PRIMARY KEY,
+  contenido TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW()
+);

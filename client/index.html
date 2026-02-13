@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRUD Blindado</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #0f172a;
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 640px;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .form-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-card h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #94a3b8;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      color: #f8fafc;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus {
+      border-color: #3b82f6;
+    }
+
+    input[type="text"]::placeholder {
+      color: #475569;
+    }
+
+    button {
+      padding: 0.75rem 1.25rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s, opacity 0.2s;
+    }
+
+    button:hover { opacity: 0.9; }
+
+    .btn-primary {
+      background: #3b82f6;
+      color: #fff;
+    }
+
+    .btn-success {
+      background: #22c55e;
+      color: #fff;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: #fff;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8rem;
+    }
+
+    .btn-edit {
+      background: #f59e0b;
+      color: #0f172a;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8rem;
+    }
+
+    .btn-cancel {
+      background: #64748b;
+      color: #fff;
+    }
+
+    .list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .list-header h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .count-badge {
+      background: #334155;
+      color: #94a3b8;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .list-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .dato-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid #334155;
+      transition: background-color 0.15s;
+    }
+
+    .dato-item:last-child { border-bottom: none; }
+    .dato-item:hover { background: #263348; }
+
+    .dato-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .dato-id {
+      background: #334155;
+      color: #94a3b8;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .dato-contenido {
+      font-size: 0.95rem;
+      color: #e2e8f0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .dato-actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-shrink: 0;
+      margin-left: 0.75rem;
+    }
+
+    .empty-state {
+      padding: 3rem 1.5rem;
+      text-align: center;
+      color: #475569;
+    }
+
+    .empty-state p {
+      font-size: 0.95rem;
+    }
+
+    .edit-form {
+      display: flex;
+      gap: 0.5rem;
+      flex: 1;
+    }
+
+    .edit-form input {
+      flex: 1;
+      padding: 0.5rem 0.75rem;
+      background: #0f172a;
+      border: 1px solid #3b82f6;
+      border-radius: 6px;
+      color: #f8fafc;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .status-msg {
+      text-align: center;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .status-msg.success {
+      display: block;
+      background: #052e16;
+      border: 1px solid #22c55e;
+      color: #4ade80;
+    }
+
+    .status-msg.error {
+      display: block;
+      background: #450a0a;
+      border: 1px solid #ef4444;
+      color: #fca5a5;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>CRUD Blindado</h1>
+
+    <div id="statusMsg" class="status-msg"></div>
+
+    <div class="form-card">
+      <h2>Agregar nuevo dato</h2>
+      <div class="input-group">
+        <input type="text" id="inputContenido" placeholder="Escribe el contenido..." />
+        <button class="btn-primary" onclick="crearDato()">Agregar</button>
+      </div>
+    </div>
+
+    <div class="list-header">
+      <h2>Registros</h2>
+      <span class="count-badge" id="countBadge">0</span>
+    </div>
+
+    <div class="list-card" id="listaContainer">
+      <div class="empty-state" id="emptyState">
+        <p>No hay datos registrados.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = '/datos';
+    let editingId = null;
+
+    function showStatus(message, type) {
+      const el = document.getElementById('statusMsg');
+      el.textContent = message;
+      el.className = 'status-msg ' + type;
+      setTimeout(() => { el.className = 'status-msg'; }, 3000);
+    }
+
+    async function cargarDatos() {
+      try {
+        const res = await fetch(API);
+        const datos = await res.json();
+        renderLista(datos);
+      } catch (err) {
+        showStatus('Error al cargar los datos', 'error');
+      }
+    }
+
+    function renderLista(datos) {
+      const container = document.getElementById('listaContainer');
+      const badge = document.getElementById('countBadge');
+      badge.textContent = datos.length;
+
+      if (datos.length === 0) {
+        container.innerHTML = '<div class="empty-state"><p>No hay datos registrados.</p></div>';
+        return;
+      }
+
+      container.innerHTML = datos.map(d => {
+        if (editingId === d.id) {
+          return `
+            <div class="dato-item">
+              <div class="edit-form">
+                <input type="text" id="editInput-${d.id}" value="${escapeHtml(d.contenido)}" onkeydown="if(event.key==='Enter') guardarEdicion(${d.id})" />
+                <button class="btn-success" onclick="guardarEdicion(${d.id})">Guardar</button>
+                <button class="btn-cancel" onclick="cancelarEdicion()">Cancelar</button>
+              </div>
+            </div>
+          `;
+        }
+        return `
+          <div class="dato-item">
+            <div class="dato-info">
+              <span class="dato-id">#${d.id}</span>
+              <span class="dato-contenido">${escapeHtml(d.contenido)}</span>
+            </div>
+            <div class="dato-actions">
+              <button class="btn-edit" onclick="iniciarEdicion(${d.id})">Editar</button>
+              <button class="btn-danger" onclick="eliminarDato(${d.id})">Eliminar</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      if (editingId !== null) {
+        const editInput = document.getElementById('editInput-' + editingId);
+        if (editInput) editInput.focus();
+      }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    async function crearDato() {
+      const input = document.getElementById('inputContenido');
+      const contenido = input.value.trim();
+      if (!contenido) {
+        showStatus('El contenido no puede estar vacio', 'error');
+        return;
+      }
+      try {
+        const res = await fetch(API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contenido }),
+        });
+        if (!res.ok) throw new Error('Error al crear');
+        input.value = '';
+        showStatus('Dato creado correctamente', 'success');
+        cargarDatos();
+      } catch (err) {
+        showStatus('Error al crear el dato', 'error');
+      }
+    }
+
+    function iniciarEdicion(id) {
+      editingId = id;
+      cargarDatos();
+    }
+
+    function cancelarEdicion() {
+      editingId = null;
+      cargarDatos();
+    }
+
+    async function guardarEdicion(id) {
+      const input = document.getElementById('editInput-' + id);
+      const contenido = input.value.trim();
+      if (!contenido) {
+        showStatus('El contenido no puede estar vacio', 'error');
+        return;
+      }
+      try {
+        const res = await fetch(API + '/' + id, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contenido }),
+        });
+        if (!res.ok) throw new Error('Error al actualizar');
+        editingId = null;
+        showStatus('Dato actualizado correctamente', 'success');
+        cargarDatos();
+      } catch (err) {
+        showStatus('Error al actualizar el dato', 'error');
+      }
+    }
+
+    async function eliminarDato(id) {
+      if (!confirm('Seguro que deseas eliminar este dato?')) return;
+      try {
+        const res = await fetch(API + '/' + id, { method: 'DELETE' });
+        if (!res.ok) throw new Error('Error al eliminar');
+        showStatus('Dato eliminado correctamente', 'success');
+        cargarDatos();
+      } catch (err) {
+        showStatus('Error al eliminar el dato', 'error');
+      }
+    }
+
+    // Enter key para crear
+    document.getElementById('inputContenido').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') crearDato();
+    });
+
+    // Cargar datos al iniciar
+    cargarDatos();
+  </script>
+</body>
+</html>
