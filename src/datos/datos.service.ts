@@ -3,6 +3,7 @@ import { Dato } from './entities/dato.entity';
 import { CreateDatoDto } from './dto/create-dato.dto';
 import { UpdateDatoDto } from './dto/update-dato.dto';
 import { Pool } from 'pg';
+import getPool from '../db';
 
 @Injectable()
 export class DatosService implements OnModuleInit {
@@ -14,30 +15,12 @@ export class DatosService implements OnModuleInit {
   private nextId = 1;
 
   async onModuleInit() {
-    const possibleKeys = [
-      'DATABASE_URL',
-      'DATABASE_URL_PUBLIC',
-      'DATABASE_URL_PUBLICA',
-      'URL_DE_LA_BASE_DE_DATOS',
-      'URL_PÚBLICA_DE_LA_BASE_DE_DATOS',
-      'DATABASE_URL_VERSEL',
-      'POSTGRES_URL',
-      'PGDATABASE_URL',
-    ];
-
-    const dbUrl = possibleKeys.map((k) => ({ k, v: process.env[k] })).find((x) => x.v)?.v;
-    const usedKey = possibleKeys.find((k) => !!process.env[k]);
-    if (!dbUrl) {
-      this.logger.warn('DATABASE_URL no definida (busqué varios nombres): usando almacenamiento en memoria');
-      return;
-    }
-    if (usedKey) this.logger.log(`Usando variable de entorno '${usedKey}' para conectar la BD`);
-
     try {
-      this.pool = new Pool({
-        connectionString: dbUrl,
-        ssl: { rejectUnauthorized: false },
-      });
+      this.pool = getPool();
+      if (!this.pool) {
+        this.logger.warn('DATABASE_URL no definida: usando almacenamiento en memoria');
+        return;
+      }
 
       // Testear conexión
       await this.pool.query('SELECT 1');
